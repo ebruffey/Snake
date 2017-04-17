@@ -5,13 +5,16 @@ public class Snake {
 		public EZRectangle snakeHead;
 		public int snakeX, snakeY;
 		public EZRectangle [] snake = new EZRectangle [5];
+	
+		static final int SCREEN_HEIGHT = 700;
+		static final int SCREEN_WIDTH = 700;
 		
 		
 		public Snake(int x, int y)  {
 				
 			for (int i = 0; i < 5; i++)  {
 				
-				snake [i] = EZ.addRectangle(x, y, 20, 20, Color.BLACK, true);
+				snake [i] = EZ.addRectangle(SCREEN_HEIGHT/2, SCREEN_WIDTH/2, 20, 20, Color.BLACK, true);
 				 x += 20;
 				 snakeX = x;
 				 snakeY = y;
