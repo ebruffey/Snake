@@ -1,30 +1,55 @@
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.Timer;
 
 public class Main {
 	
 	static boolean startScreen;
-	static boolean alive;
+	// allows for us to break out of the game loop
+	static boolean alive = true;
 	static EZText startText;
+	// width and height of the board
 	static int sWidth = 700;
 	static int sHeight = 700;
+
+	// size of the tiles, 20 pixels
+	static int tileSize = 20;
+	
+	// total tiles on the board, comes out to 1225
+	static int totalTiles = (sWidth * sHeight) / (tileSize * tileSize);
+	
 	//array for the tiles on the screen
-	static EZRectangle [] boardTiles = new EZRectangle[1225];
+		static EZRectangle [] boardTiles = new EZRectangle[totalTiles];
+	// variables for the creation of the insanely slow for loop iteration of tile creation
 	static int tileX = 10;
 	static int tileY = 10;
-	static int cX = 350;
-	static int cY = 350;
-	
+
+	// variable to hold our snake object for manipulation
 	static Snake snake;
-	static Snake snakeHead;
 	
+//	private Timer timer;
+//	private final int delay = 120;
 	
+	// function to grab the tile size for use in our other classes
+	public static int getTileSize()  {
+		return tileSize;
+	}
+	// to grab total # of tiles for use in our other functions
+	public static int getAllTiles()  {
+		return totalTiles;
+	}
+	// I think we need some sort of game initialization timer or something in order to move our snake 
+	// without any previous input? i could be wrong
+	private void initGame()  {
+		
+		long time = System.currentTimeMillis();
+	}
 	public static void main(String[] args) {
 
 		// game board initialization
 		EZ.initialize(sWidth, sHeight);
 		EZ.setBackgroundColor(Color.BLUE);
-		EZ.addRectangle(cX, cY, sWidth, sHeight, Color.WHITE, false);
+		EZ.addRectangle(350, 350, sWidth, sHeight, Color.WHITE, false);
 		// an extremely inefficient for loop to add the tiles to the screen
 		for (int i = 0; i < boardTiles.length; i++) {
 
@@ -43,11 +68,66 @@ public class Main {
 			}
 		}
 		
-		snake = new Snake(cX, cY);
-			
+	//	snake = new Snake();
+	//	snake.setJoints(3);
+		
+	//	timer = new Timer(delay);
+// main loop while we are alive!
 	while (alive = true)  {
 		
+		// creates our snake
+		snake = new Snake();
+		// initially we are moving right 
+		snake.setMovingRight(true);
+		// calls the move function so the snake moves
+		//call here or call in the snake class?
+		// still unsure
 		snake.Move();
+	/*	for (int i = 0; i < 3; i++)  {
+			
+			if (i == 0)  {
+				EZ.addRectangle(snake.getSnakeX(i), snake.getSnakeY(i), tile, tile, Color.RED, true);
+			} else  {
+				EZ.addRectangle(snake.getSnakeX(i), snake.getSnakeY(i), tile, tile, Color.BLACK, true);
+			}
+		}
+		
+	/*	for (int i = 0; i < snake.getJoints(); i++)  {
+			snake.setSnakeX(sWidth/2);
+			snake.setSnakeY(sHeight/2);
+		}
+		*/
+	//	Snake.setMovingRight(true);
+		
+//		Snake.Move();
+		// if we press the d key and we are not moving left then we can move right
+		// basically what we want is a way to track if we are moving in a specific direction
+		// and if we are we cannot move in another specified direction.
+		if (EZInteraction.wasKeyPressed('d') && (!snake.isMovingLeft()))  {
+			//we set our booleans in order to keep track
+			snake.setMovingRight(true);
+			snake.setMovingUp(false);
+			snake.setMovingDown(false);
+		}
+		
+		if (EZInteraction.wasKeyPressed('a') && (!snake.isMovingRight()))  {
+			snake.setMovingLeft(true);
+			snake.setMovingUp(false);
+			snake.setMovingDown(false);
+		}
+		
+		if (EZInteraction.wasKeyPressed('w') && (!snake.isMovingDown()))  {
+			snake.setMovingUp(true);
+			snake.setMovingRight(false);
+			snake.setMovingLeft(false);
+		}
+		
+		if (EZInteraction.wasKeyPressed('s') && (!snake.isMovingUp()))  {
+			snake.setMovingDown(true);
+			snake.setMovingRight(false);
+			snake.setMovingLeft(false);
+		}
+	
 		
 		EZ.refreshScreen();
 	}
