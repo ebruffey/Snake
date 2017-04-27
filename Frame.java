@@ -1,21 +1,22 @@
-import java.awt.Color;
 
-public class Frame {
+
+public class Frame extends Screen{
 	
-	public Frame() {
-		
+	public Frame()  {
 		
 		init();
 	}
 	
-	public void init() {
-		 
+	public void init()  {
 		Screen s = new Screen();
+		s.paint();
+		run();
 	}
-	
-	public static void main(String[]args) {
+
+	public static void main(String[] args) {
 		
 		new Frame();
+
 	}
 
 }
