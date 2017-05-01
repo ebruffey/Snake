@@ -1,16 +1,17 @@
+
+/*
+ Snake Game
+
+ For ICS 111 Final Project
+*/
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Timer;
-import java.io.FileReader;
 
 public class Main {
 
-	private static boolean startScreen;
 	// allows for us to break out of the game loop
 	protected static boolean alive = true;
-	static EZText startText;
+
 	// width and height of the board
 	private static int WIDTH = 800;
 	private static int HEIGHT = 800;
@@ -18,22 +19,26 @@ public class Main {
 	// size of the tile which is 10 pixels
 	private static int tileSize = 10;
 	// our starting x and y coordinates
-	private static int xCoor = 40, yCoor = 40;
+	private static int xCoor = 45, yCoor = 45;
 
-	// array list for our snake of type ezrectangle
+	// array list for our snake of type EZrectangle
 	private static ArrayList<EZRectangle> snake = new ArrayList<EZRectangle>();
 	// keeps track of how many pieces we have for our snake
 	private static int joints = 3;
 	// variable to hold the head of the snake
 	private static EZRectangle head;
-	
+	// variables for our score tracking
+	private static int score;
+	private static String scoreText;
+	private static EZText scores;
 	// booleans to determine the direction we are moving
 	private static boolean movingRight = true, movingLeft = false, movingUp = false, movingDown = false;
 	// creating our apple object
 	private static Apple apple;
 
+	private static int speed = 40;
 
-	public static void main(String[] args) throws java.io.IOException {
+	public static void main(String[] args) {
 
 		// game board initialization
 		EZ.initialize(WIDTH, HEIGHT);
@@ -46,24 +51,29 @@ public class Main {
 			EZ.addLine(i * 10, 0, i * 10, HEIGHT + 10, Color.BLACK, 2);
 			EZ.addLine(0, i * 10, WIDTH + 10, i * 10, Color.BLACK, 2);
 		}
+		// add the score text
+		EZ.addText(400, 790, "Score:", Color.WHITE, 20);
 		// initializing the array list in order to add to our snake
 		// for loop to create our snake
-		// we have a variable joints in order to add to ur snake
+		// we have a variable joints in order to add to our snake
 		for (int i = 0; i < joints; i++) {
-			// the head is at the 0 position in the array list and it is set to color red
+			// the head is at the 0 position in the array list and it is set to
+			// color red
 			if (i == 0) {
 				snake.add(EZ.addRectangle(xCoor, yCoor, tileSize, tileSize, Color.RED, true));
-				// create our head variable in order to easily manipulate it later
+				// initialize the head variable to the 0 place in the array in
+				// order to easily manipulate it later
 				head = snake.get(0);
 			}
-			// adding the rest of the snake to the array list 
-			snake.add(EZ.addRectangle(xCoor + 10, yCoor, tileSize, tileSize, Color.BLACK, true));
-			
+			// adding the rest of the snake to the array list
+				xCoor -= 10;
+				snake.add(EZ.addRectangle(xCoor, yCoor, tileSize, tileSize, Color.BLACK, true));
+
 		}
 
 		// creates our apple somewhere at a random location on the screen
 		apple = new Apple();
-	
+
 		// main loop while we are alive!
 		while (alive = true) {
 
@@ -71,7 +81,7 @@ public class Main {
 			// time we declared earlier.
 			// subtract and determine if its greater than or equal to some
 			// number
-			if (System.currentTimeMillis() - time >= 60) {
+			if (System.currentTimeMillis() - time >= speed) {
 
 				// we iterate through the snake, from the last occupied index in
 				// the array list
@@ -94,7 +104,8 @@ public class Main {
 						// if our boolean movingRight is true
 						// same method for all directions
 						if (movingRight == true) {
-							// then we can translate the head by 10 pixels along the x axis
+							// then we can translate the head by 10 pixels along
+							// the x axis
 							head.translateBy(10f, 0f);
 						}
 
@@ -113,73 +124,105 @@ public class Main {
 					}
 
 				}
-				// reset our time variable to the current time in order to keep our snake moving at a steady rate
+				// reset our time variable to the current time in order to keep
+				// our snake moving at a steady rate
 				time = System.currentTimeMillis();
 			}
-
 			// if we press one of the movement keys and we are going in the
 			// direction opposite of the one we chose
 			if (EZInteraction.wasKeyPressed('d') && (!movingLeft == true)) {
-				// if (movingLeft = false) {
 				// we set our booleans to their appropriate true or false
 				// depending on which direction we are moving
 				movingRight = true;
 				movingUp = false;
 				movingDown = false;
 				movingLeft = false;
-				// }
 			}
 
 			if (EZInteraction.wasKeyPressed('a') && (!movingRight == true)) {
-				// if (movingRight = false) {
 				movingLeft = true;
 				movingUp = false;
 				movingDown = false;
 				movingRight = false;
-				// }
 			}
 
 			if (EZInteraction.wasKeyPressed('w') && (!movingDown == true)) {
-				// if (movingDown = false) {
 				movingUp = true;
 				movingDown = false;
 				movingRight = false;
 				movingLeft = false;
-				// }
 			}
 
 			if (EZInteraction.wasKeyPressed('s') && (!movingUp == true)) {
-				// if (movingUp = false) {
 				movingDown = true;
 				movingUp = false;
 				movingLeft = false;
 				movingRight = false;
-				// }
 			}
+			// checking the collision of he snake with itself
+			// we start the for loop at 3 so when we spawn our snake we don't automatically die
+			for (int i = 3; i < joints; i++)  {
+				// same check system as with the apple collision
+				if(head.isPointInElement(snake.get(i).getXCenter() - tileSize / 2, snake.get(i).getYCenter() - tileSize / 2)
+					|| head.isPointInElement(snake.get(i).getXCenter() + tileSize / 2, snake.get(i).getYCenter() - tileSize / 2)
+					|| head.isPointInElement(snake.get(i).getXCenter() - tileSize / 2, snake.get(i).getYCenter() + tileSize / 2)
+					|| head.isPointInElement(snake.get(i).getXCenter() + tileSize / 2, snake.get(i).getYCenter() - tileSize / 2))  {
+					// remove everything
+					EZ.removeAllEZElements();
+					// break out of our loop
+					alive = false;
+					// add the game over text to the screen
+					EZ.addText(WIDTH / 2, HEIGHT / 2, "GAME OVER", Color.BLACK, 40);
+					
+				}
+			}
+			
 			// to determine if we collide with the wall
-			// we grab the x and y center and determine if they equal the edges of the height and width
-			if (head.getXCenter() == WIDTH || head.getYCenter() == HEIGHT || head.getXCenter() == 0
-					|| head.getYCenter() == 0) {
+			// we grab the x and y center and determine if they equal the edges
+			// of the height and width
+			if (head.getXCenter() > WIDTH || head.getYCenter() > HEIGHT || head.getXCenter() < 0
+					|| head.getYCenter() < 0) {
 				// if it does we remove all elements
 				EZ.removeAllEZElements();
+				alive = false;
+				// game over text
+				EZ.addText(WIDTH / 2, HEIGHT / 2, "GAME OVER", Color.BLACK, 40);
+				
+				// if this break is included it throws a metric shit ton of
+				// errors
+				// break;
 			}
 			// to determine the collision with the apple
-			// we decide if the heads x and y is within the boundary of the apples x and y
+			// we decide if the heads x and y is within the boundary of the
+			// apples x and y
 			if (head.isPointInElement(apple.getAppleX() - tileSize / 2, apple.getAppleY() - tileSize / 2)
 					|| head.isPointInElement(apple.getAppleX() + tileSize / 2, apple.getAppleY() - tileSize / 2)
 					|| head.isPointInElement(apple.getAppleX() - tileSize / 2, apple.getAppleY() + tileSize / 2)
 					|| head.isPointInElement(apple.getAppleX() + tileSize / 2, apple.getAppleY() - tileSize / 2)) {
-				// we increment joints in order to transfer the rectangle to the end of the arraylist
+				// increasing the speed by subtracting yeah
+				speed--;
+				// remove the score
+				EZ.removeEZElement(scores);
+				// we increment joints in order to transfer the rectangle to the
+				// end of the arraylist
 				joints++;
+				// increment score
+				score++;
+				// casting the value of score to a text variable
+				scoreText = String.valueOf(score);
+				// add the score text to the screen
+				scores = EZ.addText(445, 790, scoreText, Color.WHITE, 20);
 				// then we add another rectangle
 				// still not sure how to add it directly to the end of the tail
-				// adding it this way adds it to the original x coor and y coor then transfers it to where th tail is
+				// adding it this way adds it to the original x coor and y coor
+				// then transfers it to where th tail is
 				snake.add(EZ.addRectangle(xCoor, yCoor, tileSize, tileSize, Color.BLACK, true));
 				// apple.t
-			//	apple.ranLoc();
-			}
-			
+				apple.moveApple();
 
+			}
+
+			// annnnndddddd refresh
 			EZ.refreshScreen();
 		}
 
