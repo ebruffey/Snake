@@ -199,7 +199,7 @@ public class Main {
 					|| head.isPointInElement(apple.getAppleX() + tileSize / 2, apple.getAppleY() - tileSize / 2)
 					|| head.isPointInElement(apple.getAppleX() - tileSize / 2, apple.getAppleY() + tileSize / 2)
 					|| head.isPointInElement(apple.getAppleX() + tileSize / 2, apple.getAppleY() - tileSize / 2)) {
-				// increasing the speed by subtracting yeah
+				// addition by subtraction
 				speed--;
 				// remove the score
 				EZ.removeEZElement(scores);
